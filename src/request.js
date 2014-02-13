@@ -2,6 +2,7 @@
 "use strict";
 
 var Q = require('q');
+var HTTPError = require('nor-errors').HTTPError;
 var debug = require('nor-debug');
 var is = require('nor-is');
 
@@ -10,7 +11,7 @@ function do_args(url, opts) {
 
 	// url
 	if(is.string(url)) {
-		url = require('url').parse(url);
+		url = require('url').parse(url, true);
 	}
 	debug.assert(url).is('object');
 
@@ -30,6 +31,12 @@ function do_args(url, opts) {
 	if(opts.body && (url.method === 'POST')) {
 		url.headers['Content-Type'] = url.headers['Content-Type'] || 'text/plain';
 		url.headers['Content-Length'] = opts.body.length;
+	}
+
+	url.agent = opts.agent;
+
+	if(is.object(opts.params)) {
+		url.query = opts.params;
 	}
 
 	opts.protocol = (''+url.protocol).split(':').shift() || 'http';
@@ -72,10 +79,10 @@ function do_plain(url, opts) {
 
 /** JSON request */
 function do_json(url, opts) {
-	opts = do_args(url, opts);
-	if(opts.body) {
+	if(is.object(opts) && is.defined(opts.body)) {
 		opts.body = JSON.stringify(opts.body);
 	}
+	opts = do_args(url, opts);
 	opts.url.headers['Content-Type'] = 'application/json';
 	return do_plain(opts.url, opts).then(function(buffer) {
 		return JSON.parse(buffer);

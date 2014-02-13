@@ -23,8 +23,10 @@
   },
   "homepage": "https://github.com/sendanor/nor-rest",
   "dependencies": {
-    "nor-debug": ">= 0.1.20",
-	"nor-is": ">= 0.1.8",
+    "nor-errors": ">= 0.1.1 <0.2.0",
+    "nor-data": ">= 0.0.3 <0.1.0",
+    "nor-debug": ">= 0.1.20 <0.2.0",
+	"nor-is": ">= 0.1.8 <0.2.0",
 	"q": ">= 1.0.0"
   }
 }
