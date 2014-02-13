@@ -1,0 +1,30 @@
+{
+  "name": "nor-rest",
+  "version": "0.1.0",
+  "description": "Sendanor REST client for Node.js",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sendanor/nor-rest.git"
+  },
+  "keywords": [
+    "http",
+    "client",
+    "rest",
+    "hypermedia"
+  ],
+  "author": "Jaakko-Heikki Heusala <jheusala@iki.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sendanor/nor-rest/issues"
+  },
+  "homepage": "https://github.com/sendanor/nor-rest",
+  "dependencies": {
+    "nor-debug": ">= 0.1.20",
+	"nor-is": ">= 0.1.8",
+	"q": ">= 1.0.0"
+  }
+}
