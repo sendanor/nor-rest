@@ -48,52 +48,32 @@ Resource.prototype._request = function(opts) {
 };
 
 /** Request the same resource with GET method with params */
-Resource.prototype.GET = function(params, opts) {
-	var self = this;
-	opts = opts || {};
-	debug.assert(self).is('object');
-	debug.assert(opts).is('object');
-	debug.assert(self._request).is('function');
-	opts.method = 'GET';
-	opts.params = params;
-	return self._request(opts);
-};
+['GET', 'HEAD'].forEach(function(method) {
+	Resource.prototype[method] = function(params, opts) {
+		var self = this;
+		opts = opts || {};
+		debug.assert(self).is('object');
+		debug.assert(opts).is('object');
+		debug.assert(self._request).is('function');
+		opts.method = method;
+		opts.params = params;
+		return self._request(opts);
+	};
+});
 
-/** Request the same resource with POST method with body */
-Resource.prototype.POST = function(body, opts) {
-	var self = this;
-	opts = opts || {};
-	debug.assert(self).is('object');
-	debug.assert(opts).is('object');
-	debug.assert(self._request).is('function');
-	opts.method = 'POST';
-	opts.body = body;
-	return self._request(opts);
-};
-
-/** Request the same resource with POST method with body */
-Resource.prototype.PUT = function(body, opts) {
-	var self = this;
-	opts = opts || {};
-	debug.assert(self).is('object');
-	debug.assert(opts).is('object');
-	debug.assert(self._request).is('function');
-	opts.method = 'PUT';
-	opts.body = body;
-	return self._request(opts);
-};
-
-/** Request the same resource with DELETE method with body */
-Resource.prototype.DELETE = function(body, opts) {
-	var self = this;
-	opts = opts || {};
-	debug.assert(self).is('object');
-	debug.assert(opts).is('object');
-	debug.assert(self._request).is('function');
-	opts.method = 'DELETE';
-	opts.body = body;
-	return self._request(opts);
-};
+/** Request the same resource with POST, PUT, and DELETE method with body */
+['POST', 'PUT', 'DELETE'].forEach(function(method) {
+	Resource.prototype[method] = function(body, opts) {
+		var self = this;
+		opts = opts || {};
+		debug.assert(self).is('object');
+		debug.assert(opts).is('object');
+		debug.assert(self._request).is('function');
+		opts.method = method;
+		opts.body = body;
+		return self._request(opts);
+	};
+});
 
 // Exports
 
