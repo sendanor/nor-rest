@@ -1,5 +1,6 @@
 /** Sendanor REST client for Node.js */
 
+var util = require('util');
 var request = require('./request.js');
 var Resource = require('./Resource.js');
 

@@ -1,5 +1,6 @@
 /** Sendanor REST client for Node.js */
 
+var util = require('util');
 var is = require('nor-is');
 var debug = require('nor-debug');
 var DATA = require('nor-data');
