@@ -22,7 +22,7 @@ function do_args(url, opts) {
 	opts.url = url;
 	opts.body = opts.body ? opts.body : undefined;
 
-	debug.log('opts.body = ' , opts.body);
+	//debug.log('opts.body = ' , opts.body);
 	debug.assert(opts.body).ignore(undefined).is('string');
 
 	url.method = opts.method || 'GET';
@@ -56,7 +56,7 @@ function do_plain(url, opts) {
 		});
 		res.on('end', function() {
 			var content_type = res.headers['content-type'] || undefined;
-			debug.log('content_type = ' , content_type);
+			//debug.log('content_type = ' , content_type);
 			d.resolve( Q.fcall(function() {
 				if(res.statusCode !== 200) {
 					throw new HTTPError(res.statusCode, ((content_type === 'application/json') ? JSON.parse(buffer) : buffer) );
