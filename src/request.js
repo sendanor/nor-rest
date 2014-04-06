@@ -30,8 +30,8 @@ function do_args(url, opts) {
 	url.headers = opts.headers || {};
 
 	if(opts.body && (url.method === 'POST')) {
-		url.headers['Content-Type'] = url.headers['Content-Type'] || 'text/plain';
-		url.headers['Content-Length'] = opts.body.length;
+		url.headers['Content-Type'] = url.headers['Content-Type'] || 'text/plain;charset=utf8';
+		url.headers['Content-Length'] = new Buffer(opts.body, 'utf8').length;
 	}
 
 	url.agent = opts.agent;
@@ -56,6 +56,7 @@ function do_plain(url, opts) {
 	if(opts.redirect_loop_counter === undefined) {
 		opts.redirect_loop_counter = 10;
 	}
+	var buffer;
 	var d = Q.defer();
 	var req = require(opts.protocol).request(opts.url, function(res) {
 		var buffer = "";
@@ -105,9 +106,12 @@ function do_plain(url, opts) {
 	});
 
 	if(opts.body && (url.method !== 'GET')) {
-		req.write( opts.body );
+		buffer = is.string(opts.body) ? opts.body : JSON.stringify(opts.body);
+		debug.log('Writing buffer = ', buffer);
+		req.end( buffer, 'utf8' );
+	} else {
+		req.end();
 	}
-	req.end();
 
 	return d.promise;
 }
@@ -119,7 +123,7 @@ function do_json(url, opts) {
 		opts.body = JSON.stringify(opts.body);
 	}
 	opts.headers = opts.headers || {};
-	opts.headers['Content-Type'] = 'application/json';
+	opts.headers['Content-Type'] = 'application/json;charset=utf8';
 	opts.headers['Accept'] = 'application/json';
 	return do_plain(url, opts).then(function(buffer) {
 		return JSON.parse(buffer);
