@@ -5,6 +5,7 @@ var Q = require('q');
 var HTTPError = require('nor-errors').HTTPError;
 var debug = require('nor-debug');
 var is = require('nor-is');
+var _cookies = require('./cookies.js');
 
 /** Parse arguments */
 function do_args(url, opts) {
@@ -26,7 +27,7 @@ function do_args(url, opts) {
 	debug.assert(opts.body).ignore(undefined).is('string');
 
 	url.method = opts.method || 'GET';
-	url.headers = url.headers || {};
+	url.headers = opts.headers || {};
 
 	if(opts.body && (url.method === 'POST')) {
 		url.headers['Content-Type'] = url.headers['Content-Type'] || 'text/plain';
@@ -41,23 +42,57 @@ function do_args(url, opts) {
 
 	opts.protocol = (''+url.protocol).split(':').shift() || 'http';
 
+	var cookies = _cookies.get(url);
+	if(cookies && (cookies.length >= 1)) {
+		url.headers.cookie = cookies.join(';');
+	}
+
 	return opts;
 }
 
 /** Performs generic request */
 function do_plain(url, opts) {
 	opts = do_args(url, opts);
+	if(opts.redirect_loop_counter === undefined) {
+		opts.redirect_loop_counter = 10;
+	}
 	var d = Q.defer();
 	var req = require(opts.protocol).request(opts.url, function(res) {
 		var buffer = "";
 		res.setEncoding('utf8');
-		res.on('data', function (chunk) {
+		function collect_chunks(chunk) {
 			buffer += chunk;
-		});
-		res.on('end', function() {
+		}
+		res.on('data', collect_chunks);
+		res.once('end', function() {
+
+			res.removeListener('data', collect_chunks);
+
 			var content_type = res.headers['content-type'] || undefined;
 			//debug.log('content_type = ' , content_type);
 			d.resolve( Q.fcall(function() {
+
+				debug.log('buffer = ', buffer);
+				debug.log('res.headers = ', res.headers);
+
+				if(res.headers && res.headers['set-cookie']) {
+					_cookies.set(opts.url, res.headers['set-cookie']);
+				}
+
+				if( (res.statusCode >= 301) && (res.statusCode <= 303) ) {
+					if(opts.redirect_loop_counter < 0) {
+						throw new Error('Redirect loop detected');
+					}
+					opts.redirect_loop_counter -= 1;
+					debug.log('res.statusCode = ', res.statusCode);
+					debug.log('res.headers.location = ', res.headers.location);
+					return do_plain(res.headers.location, {
+						'method': 'GET',
+						'headers': {
+							'accept': opts.url.headers && opts.url.headers.accept
+						}
+					});
+				}
 				if(res.statusCode !== 200) {
 					throw new HTTPError(res.statusCode, ((content_type === 'application/json') ? JSON.parse(buffer) : buffer) );
 				}
@@ -65,7 +100,7 @@ function do_plain(url, opts) {
 			}) );
 		});
 
-	}).on('error', function(e) {
+	}).once('error', function(e) {
 		d.reject(new TypeError(''+e));
 	});
 
@@ -79,12 +114,14 @@ function do_plain(url, opts) {
 
 /** JSON request */
 function do_json(url, opts) {
+	opts = opts || {};
 	if(is.object(opts) && is.defined(opts.body)) {
 		opts.body = JSON.stringify(opts.body);
 	}
-	opts = do_args(url, opts);
-	opts.url.headers['Content-Type'] = 'application/json';
-	return do_plain(opts.url, opts).then(function(buffer) {
+	opts.headers = opts.headers || {};
+	opts.headers['Content-Type'] = 'application/json';
+	opts.headers['Accept'] = 'application/json';
+	return do_plain(url, opts).then(function(buffer) {
 		return JSON.parse(buffer);
 	});
 }
