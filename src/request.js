@@ -37,7 +37,7 @@ function do_args(url, opts) {
 	url.agent = opts.agent;
 
 	if(is.object(opts.params)) {
-		url.query = opts.params;
+		url.path += '?' + require('querystring').stringify(opts.params);
 	}
 
 	opts.protocol = (''+url.protocol).split(':').shift() || 'http';
@@ -123,7 +123,9 @@ function do_json(url, opts) {
 		opts.body = JSON.stringify(opts.body);
 	}
 	opts.headers = opts.headers || {};
-	opts.headers['Content-Type'] = 'application/json;charset=utf8';
+	if(opts.body) {
+		opts.headers['Content-Type'] = 'application/json;charset=utf8';
+	}
 	opts.headers['Accept'] = 'application/json';
 	return do_plain(url, opts).then(function(buffer) {
 		return JSON.parse(buffer);
