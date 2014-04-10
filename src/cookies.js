@@ -17,7 +17,7 @@ function get_cookies(url) {
 	debug.assert(url.host).is('string');
 
 	if(!is.array(_cookies[url.host])) {
-		debug.log('No cookies for host ', url.host);
+		//debug.log('No cookies for host ', url.host);
 		return undefined;
 	}
 
@@ -26,7 +26,7 @@ function get_cookies(url) {
 		return cookie.substr(0, ((i >= 1) ? i : cookie.length));
 	});
 
-	debug.log('Cookies found (for host ', url.host ,'): ', cookies);
+	//debug.log('Cookies found (for host ', url.host ,'): ', cookies);
 
 	return cookies;
 }
@@ -43,11 +43,11 @@ function set_cookies(url, cookies) {
 	debug.assert(url.host).is('string');
 	debug.assert(cookies).is('array');
 
-	debug.log('Saving cookies for host = ', url.host);
+	//debug.log('Saving cookies for host = ', url.host);
 	
 	if(!is.array(_cookies[url.host])) {
 		_cookies[url.host] = cookies;
-		debug.log('Saved new cookies as: ', _cookies[url.host]);
+		//debug.log('Saved new cookies as: ', _cookies[url.host]);
 		return;
 	}
 	
@@ -64,7 +64,7 @@ function set_cookies(url, cookies) {
 	
 	_cookies[url.host] = Object.keys(tmp).map(function(key) { return tmp[key]; });
 
-	debug.log('Saved new cookies as: ', _cookies[url.host]);
+	//debug.log('Saved new cookies as: ', _cookies[url.host]);
 }
 
 

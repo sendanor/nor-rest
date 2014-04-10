@@ -1,6 +1,6 @@
 {
   "name": "nor-rest",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Sendanor REST client for Node.js",
   "main": "src/index.js",
   "scripts": {

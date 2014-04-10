@@ -73,8 +73,8 @@ function do_plain(url, opts) {
 			//debug.log('content_type = ' , content_type);
 			d.resolve( Q.fcall(function() {
 
-				debug.log('buffer = ', buffer);
-				debug.log('res.headers = ', res.headers);
+				//debug.log('buffer = ', buffer);
+				//debug.log('res.headers = ', res.headers);
 
 				if(res.headers && res.headers['set-cookie']) {
 					_cookies.set(opts.url, res.headers['set-cookie']);
@@ -85,8 +85,8 @@ function do_plain(url, opts) {
 						throw new Error('Redirect loop detected');
 					}
 					opts.redirect_loop_counter -= 1;
-					debug.log('res.statusCode = ', res.statusCode);
-					debug.log('res.headers.location = ', res.headers.location);
+					//debug.log('res.statusCode = ', res.statusCode);
+					//debug.log('res.headers.location = ', res.headers.location);
 					return do_plain(res.headers.location, {
 						'method': 'GET',
 						'headers': {
@@ -107,7 +107,7 @@ function do_plain(url, opts) {
 
 	if(opts.body && (url.method !== 'GET')) {
 		buffer = is.string(opts.body) ? opts.body : JSON.stringify(opts.body);
-		debug.log('Writing buffer = ', buffer);
+		//debug.log('Writing buffer = ', buffer);
 		req.end( buffer, 'utf8' );
 	} else {
 		req.end();
