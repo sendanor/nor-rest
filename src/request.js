@@ -94,7 +94,7 @@ function do_plain(url, opts) {
 						}
 					});
 				}
-				if(res.statusCode !== 200) {
+				if(!((res.statusCode >= 200) && (res.statusCode < 400))) {
 					throw new HTTPError(res.statusCode, ((content_type === 'application/json') ? JSON.parse(buffer) : buffer) );
 				}
 				return buffer;
