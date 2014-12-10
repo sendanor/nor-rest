@@ -6,6 +6,7 @@ var HTTPError = require('nor-errors').HTTPError;
 var debug = require('nor-debug');
 var is = require('nor-is');
 var _cookies = require('./cookies.js');
+var FUNCTION = require('nor-function');
 
 /** Parse arguments */
 function do_args(url, opts) {
@@ -132,9 +133,35 @@ function do_json(url, opts) {
 	});
 }
 
+/** JavaScript function request */
+function do_js(url, opts) {
+	opts = opts || {};
+	if(is.object(opts) && is['function'](opts.body)) {
+		opts.body = FUNCTION.stringify(opts.body);
+	} else if(is.object(opts) && is['string'](opts.body)) {
+	} else {
+		throw new TypeError('opts.body is not function nor string');
+	}
+	opts.headers = opts.headers || {};
+	if(opts.body) {
+		opts.headers['Content-Type'] = 'application/javascript;charset=utf8';
+	}
+
+	// Default method should be POST since JavaScript code usually might change something.
+	if(!opts.method) {
+		opts.method = 'post';
+	}
+
+	opts.headers['Accept'] = 'application/json';
+	return do_plain(url, opts).then(function(buffer) {
+		return JSON.parse(buffer);
+	});
+}
+
 /** Generic HTTP/HTTPS request */
 var mod = module.exports = {};
 mod.plain = do_plain;
 mod.json = do_json;
+mod.js = do_js;
 
 /* EOF */
