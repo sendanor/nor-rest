@@ -1,15 +1,18 @@
 /** Sendanor REST client for Node.js */
 
-var util = require('util');
+"use strict";
+
+//var util = require('util');
 var is = require('nor-is');
 var debug = require('nor-debug');
+var ARRAY = require('nor-array');
 var DATA = require('nor-data');
 var REQUEST = require('./request.js');
 
 /** Generic resource */
 function Resource(data) {
 	var self = this;
-	Object.keys(data).forEach(function(key) {
+	ARRAY(Object.keys(data)).forEach(function(key) {
 		self[key] = data[key];
 	});
 }
@@ -17,10 +20,10 @@ function Resource(data) {
 /** Converts plain resource as a Resource object with methods */
 Resource.parse = function resource_parse(body) {
 	var rest = require('./index.js');
-	var obj;
+	//var obj;
 	if(is.array(body)) {
-		return body.map(resource_parse);
-    } else if(body instanceof rest.Resource) {
+		return ARRAY(body).map(resource_parse).valueOf();
+	} else if(body instanceof rest.Resource) {
 		return body;
 	} else if(is.object(body) && is.defined(body.$ref) && is.array(body.items)) {
 		return new rest.CollectionResource( DATA.object(body).map(resource_parse) );
@@ -31,9 +34,9 @@ Resource.parse = function resource_parse(body) {
 	} else {
 		return body;
 	}
-}
+};
 
-/** Smart hypermedia request  */
+/** Smart hypermedia request */
 Resource.request = function(url, opts) {
 	return REQUEST.json(url, opts).then(function(body) {
 		return Resource.parse(body);
@@ -49,7 +52,7 @@ Resource.prototype._request = function(opts) {
 };
 
 /** Request the same resource with GET method with params */
-['GET', 'HEAD'].forEach(function(method) {
+ARRAY(['GET', 'HEAD']).forEach(function(method) {
 	Resource.prototype[method] = function(params, opts) {
 		var self = this;
 		opts = opts || {};
@@ -63,7 +66,7 @@ Resource.prototype._request = function(opts) {
 });
 
 /** Request the same resource with POST, PUT, and DELETE method with body */
-['POST', 'PUT', 'DELETE'].forEach(function(method) {
+ARRAY(['POST', 'PUT', 'DELETE']).forEach(function(method) {
 	Resource.prototype[method] = function(body, opts) {
 		var self = this;
 		opts = opts || {};

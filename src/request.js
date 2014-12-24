@@ -127,7 +127,7 @@ function do_json(url, opts) {
 	if(opts.body) {
 		opts.headers['Content-Type'] = 'application/json;charset=utf8';
 	}
-	opts.headers['Accept'] = 'application/json';
+	opts.headers.Accept = 'application/json';
 	return do_plain(url, opts).then(function(buffer) {
 		return JSON.parse(buffer);
 	});
@@ -138,7 +138,7 @@ function do_js(url, opts) {
 	opts = opts || {};
 	if(is.object(opts) && is['function'](opts.body)) {
 		opts.body = FUNCTION.stringify(opts.body);
-	} else if(is.object(opts) && is['string'](opts.body)) {
+	} else if(is.object(opts) && is.string(opts.body)) {
 	} else {
 		throw new TypeError('opts.body is not function nor string');
 	}
@@ -152,7 +152,7 @@ function do_js(url, opts) {
 		opts.method = 'post';
 	}
 
-	opts.headers['Accept'] = 'application/json';
+	opts.headers.Accept = 'application/json';
 	return do_plain(url, opts).then(function(buffer) {
 		return JSON.parse(buffer);
 	});

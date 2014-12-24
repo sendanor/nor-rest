@@ -1,8 +1,10 @@
 /** Sendanor REST client for Node.js */
 
-var is = require('nor-is');
-var debug = require('nor-debug');
-var DATA = require('nor-data');
+"use strict";
+
+//var is = require('nor-is');
+//var debug = require('nor-debug');
+//var DATA = require('nor-data');
 
 var Resource = require('./Resource.js');
 

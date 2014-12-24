@@ -1,12 +1,14 @@
 /** Sendanor REST client for Node.js */
 
+"use strict";
+
 var util = require('util');
-var request = require('./request.js');
+//var request = require('./request.js');
 var Resource = require('./Resource.js');
 
 /** Element resource */
 function ElementResource(data) {
-	var self = this;
+	//var self = this;
 	Resource.call(this, data);
 }
 

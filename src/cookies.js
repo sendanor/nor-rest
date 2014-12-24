@@ -1,6 +1,7 @@
 
 "use strict";
 
+var ARRAY = require('nor-array');
 var debug = require('nor-debug');
 var is = require('nor-is');
 
@@ -21,10 +22,10 @@ function get_cookies(url) {
 		return undefined;
 	}
 
-	var cookies = _cookies[url.host].map(function(cookie) {
+	var cookies = ARRAY(_cookies[url.host]).map(function(cookie) {
 		var i = cookie.indexOf(';');
 		return cookie.substr(0, ((i >= 1) ? i : cookie.length));
-	});
+	}).valueOf();
 
 	//debug.log('Cookies found (for host ', url.host ,'): ', cookies);
 
@@ -44,13 +45,13 @@ function set_cookies(url, cookies) {
 	debug.assert(cookies).is('array');
 
 	//debug.log('Saving cookies for host = ', url.host);
-	
+
 	if(!is.array(_cookies[url.host])) {
 		_cookies[url.host] = cookies;
 		//debug.log('Saved new cookies as: ', _cookies[url.host]);
 		return;
 	}
-	
+
 	var tmp = {};
 
 	function save_cookie(cookie) {
@@ -59,10 +60,10 @@ function set_cookies(url, cookies) {
 		tmp[name] = cookie;
 	}
 
-	_cookies[url.host].forEach(save_cookie);
-	cookies.forEach(save_cookie);
-	
-	_cookies[url.host] = Object.keys(tmp).map(function(key) { return tmp[key]; });
+	ARRAY(_cookies[url.host]).forEach(save_cookie);
+	ARRAY(cookies).forEach(save_cookie);
+
+	_cookies[url.host] = ARRAY(Object.keys(tmp)).map(function(key) { return tmp[key]; }).valueOf();
 
 	//debug.log('Saved new cookies as: ', _cookies[url.host]);
 }
