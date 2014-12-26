@@ -137,7 +137,7 @@ function do_json(url, opts) {
 function do_js(url, opts) {
 	opts = opts || {};
 	if(is.object(opts) && is['function'](opts.body)) {
-		opts.body = FUNCTION.stringify(opts.body);
+		opts.body = FUNCTION(opts.body).stringify();
 	} else if(is.object(opts) && is.string(opts.body)) {
 	} else {
 		throw new TypeError('opts.body is not function nor string');
