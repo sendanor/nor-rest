@@ -13,3 +13,8 @@ Installation
 
 You can install the module from the NPM: `npm install nor-rest`
 
+
+Commercial Support
+------------------
+
+You can buy commercial support from [Sendanor](http://sendanor.com/software).
